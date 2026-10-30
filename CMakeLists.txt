@@ -13,16 +13,24 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GIO REQUIRED gio-2.0 glib-2.0)
 
 add_executable(ble_receiver_node src/ble_receiver_node.cpp)
 ament_target_dependencies(ble_receiver_node rclcpp std_msgs)
+target_include_directories(ble_receiver_node PRIVATE ${GIO_INCLUDE_DIRS})
+target_link_libraries(ble_receiver_node ${GIO_LIBRARIES})
 
 add_executable(motion_controller_node src/motion_controller_node.cpp)
 ament_target_dependencies(motion_controller_node rclcpp std_msgs geometry_msgs)
 
+add_executable(ble_feedback_node src/ble_feedback_node.cpp)
+ament_target_dependencies(ble_feedback_node rclcpp std_msgs geometry_msgs)
+
 install(TARGETS
   ble_receiver_node
   motion_controller_node
+  ble_feedback_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
